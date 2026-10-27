@@ -1,0 +1,24 @@
+Tasks to Perform
+11 Tasks
+1
+Create a Node.js project with a test script using Jest.
+2
+Create a GitHub repository and push the project files.
+3
+Create a workflow file ci.yml inside .github/workflows/.
+4
+Configure GitHub Actions workflow to: Checkout source code, Setup Node.js, Install dependencies, Run test cases.
+5
+Install and configure Jenkins.
+6
+Create a Jenkins Pipeline job.
+7
+Add a Jenkinsfile with the stages: Checkout, Install, Test, Build.
+8
+Execute both pipelines and verify successful execution.
+9
+Capture screenshots of GitHub Actions workflow run & Jenkins Pipeline Console Output.
+10
+Compare GitHub Actions and Jenkins based on setup and execution.
+11
+Write a brief conclusion.
