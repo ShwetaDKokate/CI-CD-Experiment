@@ -1,0 +1,40 @@
+clc;
+clear;
+close all;
+
+% Define indoor conditions
+condition = {'No obstacle','Wooden door','Glass partition', ...
+    'Furniture','Concrete wall','Multiple obstruction'};
+
+% Store RSSI values in dBm
+rssi = [-48.2 -54.2 -57.2 -61.2 -69.2 -75.2];
+
+% Calculate relative path loss
+pathLoss = rssi(1) - rssi;
+
+% Create and display the results table
+T = table(condition', rssi', pathLoss', ...
+    'VariableNames', {'Condition','RSSI_dBm','PathLoss_dB'});
+disp(T);
+
+% Plot RSSI graph
+figure;
+plot(rssi, '-o');
+grid on;
+xticks(1:6);
+xticklabels(condition);
+xtickangle(35);
+xlabel('Indoor Condition');
+ylabel('RSSI (dBm)');
+title('RSSI vs Obstacles');
+
+% Plot path loss bar graph
+figure;
+bar(pathLoss);
+grid on;
+xticks(1:6);
+xticklabels(condition);
+xtickangle(35);
+xlabel('Indoor Condition');
+ylabel('Path Loss (dB)');
+title('Indoor Path Loss');
