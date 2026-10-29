@@ -1,0 +1,278 @@
+###3rd Practical: Frequency Reuse Demonstration in Wireless Communication 
+clc;
+clear;
+close all;
+
+% Frequency reuse demonstration
+R = 1; % Normalized cell radius
+N = 7; % Cluster size
+
+% Frequency groups
+freq = 1:N;
+
+% Hexagonal cell geometry
+theta = (0:6)*pi/3 + pi/6;
+hx = R*cos(theta);
+hy = R*sin(theta);
+
+% Generate a cellular grid
+xIndex = -3:3;
+yIndex = -3:3;
+
+figure('Color','w');
+hold on;
+axis equal;
+grid on;
+box on;
+
+count = 0;
+
+for m = xIndex
+    for n = yIndex
+
+        % Center coordinates of pointy-top hexagons
+        xc = 1.5*R*m;
+        yc = sqrt(3)*R*(n + 0.5*mod(m,2));
+
+        % Skip cells outside a circular display area
+        if sqrt(xc^2 + yc^2) > 5.5*R
+            continue;
+        end
+
+        count = count + 1;
+
+        % Assign frequency group using a repeating pattern
+        group = mod(m + 2*n, N) + 1;
+
+        % Draw hexagonal cell
+        patch(xc + hx, yc + hy, 'w', ...
+            'EdgeColor', 'k', 'LineWidth', 1.2);
+
+        % Label the frequency group
+        text(xc, yc, sprintf('F%d', group), ...
+            'HorizontalAlignment', 'center', ...
+            'FontWeight', 'bold', 'FontSize', 10);
+
+    end
+end
+
+% Display reuse information
+Q = sqrt(3*N);
+D = Q*R;
+
+title(sprintf('Frequency Reuse Pattern: N = %d, D/R = %.2f', N, Q));
+xlabel('Distance (normalized)');
+ylabel('Distance (normalized)');
+
+fprintf('Cluster size N = %d\n', N);
+fprintf('Normalized cell radius R = %.2f\n', R);
+fprintf('Reuse ratio D/R = %.4f\n', Q);
+fprintf('Normalized reuse distance D = %.4f\n', D);
+fprintf('Number of displayed cells = %d\n', count);
+
+hold off;
+
+
+### 7th Practical: Performance Analysis of Bluetooth Data Transfer 
+python-
+import matplotlib.pyplot as plt
+
+# Experimental data
+file_size = [1, 5, 10, 25, 50]
+transfer_time = [1.2, 3.5, 7.0, 18.0, 37.0]
+
+# Calculate transfer rate
+transfer_rate = []
+
+for size, time in zip(file_size, transfer_time):
+    rate = (size * 8) / time
+    transfer_rate.append(rate)
+
+# Display results
+print("File Size (MB) Time (s) Rate (Mbps)")
+
+for size, time, rate in zip(file_size, transfer_time, transfer_rate):
+    print(f"{size:10} {time:6.2f} {rate:8.2f}")
+
+# Plot
+plt.figure(figsize=(8, 5))
+plt.plot(
+    file_size,
+    transfer_rate,
+    marker='o'
+)
+
+plt.xlabel("File Size (MB)")
+plt.ylabel("Transfer Rate (Mbps)")
+plt.title("Bluetooth Data Transfer Performance")
+plt.grid(True)
+plt.show()
+
+
+
+### 8th Practical: Study of Path Loss in an Indoor Environment (RSSI vs. Obstacles) 
+% Study of path loss in an indoor environment
+% RSSI versus obstacles
+
+clc;
+clear;
+close all;
+
+% Obstacle/condition names
+condition = {'No obstacle','Wooden door','Glass partition', ...
+    'Furniture','Concrete wall','Multiple obstruction'};
+
+% Sample RSSI readings in dBm
+rssi = [-48.2 -54.2 -57.2 -61.2 -69.2 -75.2];
+
+% Reference RSSI: no-obstacle condition
+referenceRSSI = rssi(1);
+
+% Relative path loss / additional attenuation
+pathLoss = referenceRSSI - rssi;
+
+% Display results
+T = table(condition', rssi', pathLoss', ...
+    'VariableNames', {'Condition','Average_RSSI_dBm', ...
+    'Relative_Path_Loss_dB'});
+
+disp(T);
+
+% Plot RSSI vs. obstacle condition
+figure;
+plot(1:length(rssi), rssi, '-o', ...
+    'LineWidth', 1.5, 'MarkerSize', 7);
+
+grid on;
+xticks(1:length(condition));
+xticklabels(condition);
+xtickangle(35);
+
+xlabel('Indoor condition / obstacle');
+ylabel('Average RSSI (dBm)');
+title('RSSI vs. Obstacles in an Indoor Environment');
+
+% Plot relative path loss
+figure;
+bar(pathLoss);
+
+grid on;
+xticks(1:length(condition));
+xticklabels(condition);
+xtickangle(35);
+
+xlabel('Indoor condition / obstacle');
+ylabel('Relative Path Loss (dB)');
+title('Relative Path Loss due to Indoor Obstacles');
+
+### 9th Practical: Noise and Interference Analysis in Wireless Communication Using BPSK with AWGN and Sinusoidal Interference 
+% Noise and Interference Analysis in Wireless Communication
+% BPSK system with AWGN and sinusoidal interference
+clc;
+clear;
+close all;
+rng(1);
+N = 1e5;
+SNR_dB = 0:2:20;
+A = 1;
+% Generate random binary data
+data = randi([0 1], 1, N);
+% BPSK modulation: 0 -> -1, 1 -> +1
+tx = A * (2*data - 1);
+% Interference parameters
+f_int = 0.07;
+int_amp = 0.55;
+n = 0:N-1;
+interference = int_amp*sin(2*pi*f_int*n);
+
+ber_noise = zeros(size(SNR_dB));
+ber_interference = zeros(size(SNR_dB));
+
+for k = 1:length(SNR_dB)
+    snr_linear = 10^(SNR_dB(k)/10);
+    sigma = sqrt(1/(2*snr_linear));
+    noise = sigma*randn(1, N);
+
+    % Noise only
+    rx1 = tx + noise;
+    detected1 = rx1 >= 0;
+    ber_noise(k) = mean(detected1 ~= data);
+
+    % Noise + interference
+    rx2 = tx + noise + interference;
+    detected2 = rx2 >= 0;
+    ber_interference(k) = mean(detected2 ~= data);
+end
+
+% Display results
+T = table(SNR_dB', ber_noise', ber_interference', ...
+    'VariableNames', {'SNR_dB', 'BER_Noise_Only', ...
+    'BER_Noise_Interference'});
+disp(T);
+
+% BER plot
+figure;
+semilogy(SNR_dB, ber_noise, '-o', 'LineWidth', 1.5);
+hold on;
+semilogy(SNR_dB, ber_interference, '-s', 'LineWidth', 1.5);
+
+grid on;
+xlabel('SNR (dB)');
+ylabel('Bit Error Rate (BER)');
+title('Effect of Noise and Interference on Wireless Communication');
+legend('AWGN only', 'AWGN + Interference', 'Location', 'southwest');
+
+### 10th Practical: Study of Cellular Network Parameters Using a Smartphone 
+
+% Study of Cellular Network Parameters Using a Smartphone
+% Signal strength versus measurement location
+
+clc;
+clear;
+close all;
+
+% Sample measurements obtained from a smartphone
+location = {'Classroom','Corridor','Near Window','Open Area', ...
+    'Basement','Lift/Weak Area','Upper Floor','Entrance'};
+
+networkType = {'4G/LTE','4G/LTE','5G','5G','3G','2G','4G/LTE','5G'};
+
+% Signal strength in dBm
+signalStrength = [-82 -76 -69 -61 -96 -101 -73 -66];
+
+% Display data
+T = table(location', networkType', signalStrength', ...
+    'VariableNames', {'Location','Network_Type','Signal_Strength_dBm'});
+
+disp(T);
+
+% Average signal strength
+avgSignal = mean(signalStrength);
+fprintf('Average signal strength = %.2f dBm\n', avgSignal);
+
+% Bar graph
+figure;
+bar(signalStrength);
+grid on;
+xticks(1:length(location));
+xticklabels(location);
+xtickangle(35);
+
+xlabel('Measurement Location');
+ylabel('Signal Strength (dBm)');
+title('Cellular Signal Strength at Different Locations');
+
+% Line graph
+figure;
+plot(1:length(signalStrength), signalStrength, '-o', ...
+    'LineWidth', 1.5, 'MarkerSize', 7);
+
+grid on;
+xticks(1:length(location));
+xticklabels(location);
+xtickangle(35);
+
+xlabel('Measurement Location');
+ylabel('Signal Strength (dBm)');
+title('Variation of Cellular Signal Strength');
+
